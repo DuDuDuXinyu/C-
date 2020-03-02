@@ -87,6 +87,7 @@ struct ListNode* reverseList(struct ListNode* head) {
 }
 
 //判断是否存在环形链表
+//bool的头文件是<stdbool.h>
 
 bool hasCycle(struct ListNode* head) {
 	Node* low = head;
