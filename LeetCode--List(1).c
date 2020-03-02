@@ -136,3 +136,136 @@ struct ListNode* middleNode(struct ListNode* head) {
 	}
 	return low;
 }
+
+//判断一个链表是否为回文链表
+//方法一：用快慢指针找到中间节点，然后把后半部分逆置比较
+//方法二：逆置全部链表，这样的话就是没有对比链表了（不可行）
+
+bool isPalindrome(struct SLNode* head) {
+	SLNode* low = head;
+	SLNode* fast = head;
+	SLNode* prev = NULL;
+	SLNode* newNode = NULL;
+
+	//因为下面的的函数体无法判断链表为空和只有一个数据的情况
+
+	if (head == NULL || head->next == NULL) 
+	{
+		//当链表为空或者只有一个数据的时候，直接判定为true
+
+		return true;
+	}
+
+	//这个判断的是当链表有俩个数据的情况
+	//这段的if语句可以不要
+	//但是只有写的话可以降低函数的时间复杂度
+	//这里只需要一次比较即可完成判断
+
+	if (head->next->next == NULL) {
+
+		//我们只需要比较第一个和第二个数据是不是相同的即可
+
+		if (head->data == head->next->data)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	//while里面的条件要注意
+	//fast是双数的条件
+	//fast->next是单数的条件
+
+	while (fast && fast->next)
+	{
+		//保存low的前一个值
+		//因为双数的时候prev才是前一部分的最后一个
+		prev = low;
+
+		//慢的一次走一个
+
+		low = low->next;
+
+		//快的一次走俩个
+		//用三目运算符来确定最后的fast的位置
+		//fast = fast->next ? fast->next->next : fast->next;
+		//但是为了以后的步骤未采用这种方法
+
+		fast = fast->next->next;
+	}
+
+	//偶数个
+
+	if (fast == NULL)
+	{
+		//让head这个链表在一半的地方就结束
+
+		prev->next = NULL;
+
+		//逆置后半部分的链表
+
+		fast = low;
+		while (fast)
+		{
+			fast = low->next;
+			low->next = newNode;
+			newNode = low;
+			low = fast;
+		}
+
+		//遍历俩个链表，判断是否为回文函数
+
+		while (newNode && head)
+		{
+			if (newNode->data == head->data)
+			{
+				newNode = newNode->next;
+				head = head->next;
+			}
+			else {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	//奇数个
+
+	else
+	{
+		//定位到后半部分链表的开始位置
+
+		fast = low->next;
+
+		//释放处于最中间的位置的数据
+
+		free(low);
+
+		//逆置后半部分链表
+
+		low = fast;
+		prev->next = NULL;
+		while (fast)
+		{
+			fast = low->next;
+			low->next = newNode;
+			newNode = low;
+			low = fast;
+		}
+
+		//遍历俩个链表，判断是否为回文函数
+
+		while (newNode && head)
+		{
+			if (newNode->data == head->data)
+			{
+				newNode = newNode->next;
+				head = head->next;
+			}
+			else {
+				return false;
+			}
+		}
+		return true;
+	}
+}
