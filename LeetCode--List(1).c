@@ -141,7 +141,7 @@ struct ListNode* middleNode(struct ListNode* head) {
 //方法一：用快慢指针找到中间节点，然后把后半部分逆置比较
 //方法二：逆置全部链表，这样的话就是没有对比链表了（不可行）
 
-bool isPalindrome(struct SLNode* head) {
+bool isPalindrome(struct ListNode* head) {
 	SLNode* low = head;
 	SLNode* fast = head;
 	SLNode* prev = NULL;
@@ -268,4 +268,48 @@ bool isPalindrome(struct SLNode* head) {
 		}
 		return true;
 	}
+}
+
+//给定一个节点，在链表中删除该节点
+
+void deleteNode(struct ListNode* node) 
+{
+	//cur是用来释放node所替代的节点的
+	//为了防止造成内存泄露
+
+	Node* cur = node->next;
+	node->val = node->next->val;
+	node->next = node->next->next;
+	free(cur);
+}
+
+// 二进制链表转整数
+//链表中每个结点的值不是 0 就是 1
+
+int getDecimalValue(struct ListNode* head) {
+
+	//
+
+	int bit[32], i = 0, sum = 0, count = 0;
+
+	//把链表的数据按顺序的放在数组中
+
+	while (head)
+	{
+		bit[i++] = head->val;
+		head = head->next;
+	}
+	count = i;
+
+	//二进制转换为整数
+
+	while (i)
+	{
+		if (bit[i - 1] == 1)
+		{
+			sum += pow(2, count - i);
+		}
+		i--;
+	}
+	return sum;
 }
