@@ -313,3 +313,76 @@ int getDecimalValue(struct ListNode* head) {
 	}
 	return sum;
 }
+
+//合并两个已排序的链表
+
+//方法一：采用了递归的方法来解决整个问题
+//好处就是并没有开辟新空间
+//不好处就是当链表过长（数据量很大）的时候，递归所需要的栈空间和时间的消耗比较大
+
+struct ListNode* mergeTwoLists(struct ListNode* l1, struct ListNode* l2) {
+	if (l1 == NULL) {
+		return l2;
+	}
+	if (l2 == NULL) {
+		return  l1;
+	}
+	if (l1->val < l2->val) {
+		l1->next = mergeTwoLists(l1->next, l2);
+		return l1;
+	}
+	else {
+		l2->next = mergeTwoLists(l1, l2->next);
+		return l2;
+	}
+}
+
+//方法二：开辟一个新的链表来存储整个俩个链表的数据
+
+struct ListNode* mergeTwoLists(struct ListNode* l1, struct ListNode* l2) {
+	Node* newNode = NULL;
+
+	//头插法来把小的数据压入newNode中
+
+	while (l1 && l2)
+	{
+		if (l1->val > l2->val)
+		{
+			Node* cur = l2->next;
+			l2->next = newNode;
+			newNode = l2;
+			l2 = cur;
+		}
+		else
+		{
+			Node* cur = l1->next;
+			l1->next = newNode;
+			newNode = l1;
+			l1 = cur;
+		}
+	}
+
+	//注意这里不可以直接把未插入的链表接到newNode的后
+	//因为之前的排序过程中将最小的数字给排在了newNode的开始
+	//所以后面的排序也需要按之前的头插进去
+
+	while (l1)
+	{
+		Node* cur = l1->next;
+		l1->next = newNode;
+		newNode = l1;
+		l1 = cur;
+	}
+	while (l2)
+	{
+		Node* cur = l2->next;
+		l2->next = newNode;
+		newNode = l2;
+		l2 = cur;
+	}
+
+	//由于这样出来的newNode的链表是逆序的
+	//调用逆置表的很熟reverseList来逆置一下
+
+	return reverseList(newNode);
+}
