@@ -388,6 +388,124 @@ struct ListNode* mergeTwoLists(struct ListNode* l1, struct ListNode* l2) {
 	return reverseList(newNode);
 }
 
+//方法三：直接连接俩个链表
+
+struct ListNode* mergeTwoLists(struct ListNode* l1, struct ListNode* l2) {
+	if (NULL == l1)
+	{
+		return l2;
+	}
+	if (NULL == l2)
+	{
+		return l1;
+	}
+
+	//用newNode来指向他们其中的一个节点
+
+	Node* newNode = NULL;
+
+	//指向新链表的最后一个节点
+
+	Node* tail = NULL;
+
+	if (l1->val <= l2->val)
+	{
+		newNode = l1;
+		l1 = l1->next;
+	}
+	else
+	{
+		newNode = l2;
+		l2 = l2->next;
+	}
+
+	//因为现在newNode只有一个数据
+	//所以tail就和newNode在同一个位置
+
+	tail = newNode;
+
+	//比较拼接
+
+	while (l1 && l2)
+	{
+		//小的数据连接在tail的后面
+
+		if (l1->val <= l2->val)
+		{
+			tail->next = l1;
+			l1 = l1->next;
+		}
+		else
+		{
+			tail->next = l2;
+			l2 = l2->next;
+		}
+		tail = tail->next;
+	}
+
+	//while出来之后肯定有一个链表为空
+	//所以直接把为遍历完的直接接在tail的后面
+
+	if (l1)
+	{
+		tail->next = l1;
+	}
+	else
+	{
+		tail->next = l2;
+	}
+
+	return newNode;
+}
+
+//方法四：方法三的优化版本
+//采用的是带头节点的链表
+
+struct ListNode* mergeTwoLists(struct ListNode* l1, struct ListNode* l2) {
+	if (NULL == l1)
+	{
+		return l2;
+	}
+	if (NULL == l2)
+	{
+		return l1;
+	}
+
+	//在栈上开辟的一个newNode
+
+	Node newNode;
+
+	//指向新链表的最后一个节点
+
+	Node* tail = &newNode;
+	while (l1 && l2)
+	{
+		if (l1->val <= l2->val)
+		{
+			tail->next = l1;
+			l1 = l1->next;
+		}
+		else
+		{
+			tail->next = l2;
+			l2 = l2->next;
+		}
+		tail = tail->next;
+	}
+	if (l1)
+	{
+		tail->next = l1;
+	}
+	else
+	{
+		tail->next = l2;
+	}
+
+	//返回的时候返回newNode的下一个节点
+
+	return newNode.next;
+}
+
 //从尾到头打印链表,要求：用数组返回
 
 //方法一：先将存后逆置
@@ -518,4 +636,67 @@ struct ListNode* getKthFromEnd(struct ListNode* head, int k) {
 	}
 
 	return latter;
+}
+
+// 分割链表
+
+struct ListNode* partition(struct ListNode* head, int x) 
+{
+	//在栈上创建俩个空的链表
+
+	Node lessNode = { 0,NULL };
+	Node moreNode = { 0,NULL };
+
+	//用指针指向空链表
+	//形成带头节点的链表
+
+	Node* lessTail = &lessNode;
+	Node* moreTail = &moreNode;
+
+	//当head为空直接返回
+
+
+	if (NULL == head)
+	{
+		return NULL;
+	}
+
+	//遍历分类
+
+	while (head)
+	{
+
+		//这里的存数字很细节，要注意
+
+		if (head->val < x)
+		{
+			//将整个head接在lessTail后
+			//但是最后的位置还是由lessTail来确定的
+
+			lessTail->next = head;
+			lessTail = head;
+		}
+		else
+		{
+			moreTail->next = head;
+			moreTail = head;
+		}
+		head = head->next;
+	}
+
+	//将俩个链表合成一个链表
+	//注意这里的细节
+	//moreNode的next与前面的链表链接
+	//因为是个带头节点的链表
+
+	lessTail->next = moreNode.next;
+
+	//注意：这里的moreTail之后需要加入一个NULL来结束
+	//因为不一定这里正好就是NULL，也有可能是head在此节点之后的一串节点直到NULL
+
+	moreTail->next = NULL;
+
+	//带头节点的链表，返回头节点的下一个节点即可
+
+	return lessNode.next;
 }
