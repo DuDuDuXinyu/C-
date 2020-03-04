@@ -165,7 +165,7 @@ bool isPalindrome(struct ListNode* head) {
 
 		//我们只需要比较第一个和第二个数据是不是相同的即可
 
-		if (head->data == head->next->data)
+		if (head->val == head->next->val)
 		{
 			return true;
 		}
@@ -217,7 +217,7 @@ bool isPalindrome(struct ListNode* head) {
 
 		while (newNode && head)
 		{
-			if (newNode->data == head->data)
+			if (newNode->val == head->val)
 			{
 				newNode = newNode->next;
 				head = head->next;
@@ -257,7 +257,7 @@ bool isPalindrome(struct ListNode* head) {
 
 		while (newNode && head)
 		{
-			if (newNode->data == head->data)
+			if (newNode->val == head->val)
 			{
 				newNode = newNode->next;
 				head = head->next;
@@ -311,6 +311,7 @@ int getDecimalValue(struct ListNode* head) {
 		}
 		i--;
 	}
+
 	return sum;
 }
 
@@ -385,4 +386,136 @@ struct ListNode* mergeTwoLists(struct ListNode* l1, struct ListNode* l2) {
 	//调用逆置表的很熟reverseList来逆置一下
 
 	return reverseList(newNode);
+}
+
+//从尾到头打印链表,要求：用数组返回
+
+//方法一：先将存后逆置
+
+int* reversePrint(struct ListNode* head, int* returnSize) {
+
+	//使用malloc开辟一个空间
+
+	int* res = (int*)malloc(sizeof(int) * 10000);
+
+	//将链表的数据存在开辟的res中
+
+	int i = 0;
+	while (head)
+	{
+		res[i++] = head->val;
+		head = head->next;
+	}
+
+	int left = 0, right = i - 1;
+	
+	//逆置数组
+
+	while (left < right)
+	{
+		int temp = res[left];
+		res[left] = res[right];
+		res[right] = temp;
+		left++;
+		right--;
+	}
+
+	//*returnSize的值就是改变外部数字的变量，来确定一共有几个数据
+
+	*returnSize = i;
+
+	return res;
+}
+
+//方法二：先逆置链表在存储
+
+int* reversePrint(struct ListNode* head, int* returnSize) {
+	int* res = (int*)malloc(sizeof(int) * 10000);
+
+	//改变链表的指向，来逆置
+
+	Node* cur = head;
+	Node* prev = NULL;
+
+	while (cur)
+	{
+		head = cur->next;
+		cur->next = prev;
+		prev = cur;
+		cur = head;
+	}
+
+	//存入数组
+
+	int i = 0;
+	head = prev;
+	while (head)
+	{
+		res[i++] = head->val;
+		head = head->next;
+	}
+	*returnSize = i;
+
+	return res;
+}
+
+//输出链表中倒数第k个节点
+
+//方法一：先逆置之后然后在逆置k个结点即可
+
+struct ListNode* getKthFromEnd(struct ListNode* head, int k) {
+	//先逆置遍历整个链表
+
+	Node* cur = head;
+	Node* prev = NULL;
+
+	while (cur)
+	{
+		head = cur->next;
+		cur->next = prev;
+		prev = cur;
+		cur = head;
+	}
+
+	//开始逆置k个结点，所得到的链表就是返回的链表
+
+	head = prev;
+	cur = head;
+	prev = NULL;
+	while (k--)
+	{
+		head = cur->next;
+		cur->next = prev;
+		prev = cur;
+		cur = head;
+	}
+
+	return prev;
+}
+
+//方法二：采用双指针来解决
+
+struct ListNode* getKthFromEnd(struct ListNode* head, int k) {
+	Node* latter = head;
+	Node* former = head;
+
+	//先让former走k个字节
+
+	while (k--)
+	{
+		former = former->next;
+	}
+
+	//latter和former一起走
+	//当former走到末尾的时候
+	//这时latter所在的位置就是倒数第k个节点
+	//latter和直接的差距就是k个字节
+
+	while (former)
+	{
+		latter = latter->next;
+		former = former->next;
+	}
+
+	return latter;
 }
