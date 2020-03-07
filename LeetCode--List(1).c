@@ -138,8 +138,9 @@ struct ListNode* middleNode(struct ListNode* head) {
 }
 
 //判断一个链表是否为回文链表
-//方法一：用快慢指针找到中间节点，然后把后半部分逆置比较
-//方法二：逆置全部链表，这样的话就是没有对比链表了（不可行）
+
+//方法一：逆置全部链表，这样的话就是没有对比链表了（不可行）
+//方法二：用快慢指针找到中间节点，然后把后半部分逆置比较
 
 bool isPalindrome(struct ListNode* head) {
 	SLNode* low = head;
@@ -268,6 +269,40 @@ bool isPalindrome(struct ListNode* head) {
 		}
 		return true;
 	}
+}
+
+//方法三：将链表的数据存在数组中然后判断
+//方法很暴力但是思维很简单
+//缺点就是占用了额外的内存
+
+bool isPalindrome(struct ListNode* head) {
+	Node* cur = head;
+
+	//由于未知链表的长度，所以数组的容量需要更大
+
+	int a[50000];
+
+	//存入数组
+
+	int i = 0;
+	while (cur)
+	{
+		a[i++] = cur->val;
+		cur = cur->next;
+	}
+	int left = 0, right = i - 1;
+	while (left < right)
+	{
+		if (a[left] == a[right])
+		{
+			left++;
+			right--;
+		}
+		else {
+			return false;
+		}
+	}
+	return true;
 }
 
 //给定一个节点，在链表中删除该节点
