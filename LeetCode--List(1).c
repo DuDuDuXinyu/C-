@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <stdbool.h>
 
+//单链表的创建
+
  typedef struct ListNode {
 	int val;
 	struct ListNode *next;
