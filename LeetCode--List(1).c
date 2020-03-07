@@ -305,6 +305,7 @@ bool isPalindrome(struct ListNode* head) {
 			return false;
 		}
 	}
+
 	return true;
 }
 
