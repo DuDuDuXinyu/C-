@@ -290,6 +290,9 @@ bool isPalindrome(struct ListNode* head) {
 		a[i++] = cur->val;
 		cur = cur->next;
 	}
+
+	//用数组的方法来判断是否为回文
+
 	int left = 0, right = i - 1;
 	while (left < right)
 	{
