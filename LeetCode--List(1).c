@@ -272,7 +272,7 @@ bool isPalindrome(struct ListNode* head) {
 }
 
 //方法三：将链表的数据存在数组中然后判断
-//方法很暴力但是思维很简单
+//虽然方法很暴力但是思维很简单，并且运行时间快
 //缺点就是占用了额外的内存
 
 bool isPalindrome(struct ListNode* head) {
