@@ -679,3 +679,75 @@ struct ListNode* getKthFromEnd(struct ListNode* head, int k) {
 
 	return latter;
 }
+
+//相交链表
+//判断俩个链表是否相交
+//相交指的是从某一个节点之后的所有节点都相同
+
+struct ListNode* getIntersectionNode(struct ListNode* headA, struct ListNode* headB) 
+{
+	//当有一个链表为空的时候，那么俩个链表就不会相交
+
+	if (NULL == headA || NULL == headB)
+	{
+		return NULL;
+	}
+
+	Node* curA = headA;
+	Node* curB = headB;
+
+	int along = 0, blong = 0;
+
+	//俩个链表都走到最后
+	//并计数得出俩个链表的长度
+
+	while (curA)
+	{
+		along++;
+		curA = curA->next;
+	}
+	while (curB)
+	{
+		blong++;
+		curB = curB->next;
+	}
+
+	//如果俩个链表相交的话，那么他们最后的节点一定是相同的
+	//所以我们只需要判断俩个链表的最后一个节点是否相同即可得知俩个链表是否相同
+
+	if (curA != curB)
+	{
+		return NULL;
+	}
+
+	//因为俩个链表有可能不是一样的长度，但是从相交节点之后都是相同的
+	//所以我们需要让长的链表从和短的链表的等长的地方开始
+	//这样俩个链表再开始同时向后遍历
+	//此时遇到俩个链表相同的节点就是相交的节点
+
+	int num = along - blong;
+	curA = headA;
+	curB = headB;
+	if (num > 0)
+	{
+		while (num--)
+		{
+			curA = curA->next;
+		}
+	}
+	else
+	{
+		while (num++)
+		{
+			curB = curB->next;
+		}
+	}
+
+	while (curA != curB)
+	{
+		curA = curA->next;
+		curB = curB->next;
+	}
+
+	return curA;
+}
