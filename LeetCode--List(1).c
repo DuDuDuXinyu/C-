@@ -45,6 +45,7 @@ struct ListNode* removeElements(struct ListNode* head, int val) {
 			cur = cur->next;
 		}
 	}
+
 	return head;
 }
 
