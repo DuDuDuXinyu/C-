@@ -2,10 +2,27 @@
 #include <assert.h>
 #include <stdbool.h>
 
+//单链表
+
 typedef struct ListNode {
 	int val;
 	struct ListNode* next;
 }Node;
+
+//带随机指针的单链表
+
+class Node {
+public:
+	int val;
+	Node* next;
+	Node* random;
+
+	Node(int _val) {
+		val = _val;
+		next = NULL;
+		random = NULL;
+	}
+};
 
 // 分割链表
 
@@ -119,3 +136,302 @@ struct ListNode* detectCycle(struct ListNode* head) {
 
 	return head;
 }
+
+//复制带随机指针的链表
+//除了next指针指向下一个节点外还有一个random的指针随机指向任意节点或者NULL
+
+//方法一：开辟一个新的链表newHead，遍历head使newHead与head的next一样
+//然后在head中找每一个节点的random所指向的位置，继而让newHead的random指向自己的链表对应的位置
+//返回新开辟的链表newHead
+
+class Solution {
+public:
+
+	//自定义一个开辟空间并初始化的函数
+
+	Node* buyNode(int val)
+	{
+		Node* newNode = (Node*)malloc(sizeof(Node));
+		
+		//判断空间是否开辟成功
+
+		if (NULL == newNode)
+		{
+			return NULL;
+		}
+
+		//赋值初始化
+
+		newNode->val = val;
+		newNode->next = NULL;
+		newNode->random = NULL;
+
+		return newNode;
+	}
+
+	Node* copyRandomList(Node* head) 
+	{
+		//如果head为NULL直接返回
+
+		if (NULL == head)
+		{
+			return NULL;
+		}
+
+		Node* newHead = NULL;
+		Node* newNode = NULL;
+		Node* cur = head;
+
+		//采用尾插法来cope链表head
+		//因为一开始的newHead是NULL
+		//所以需要现在循坏外面给定一个初值这样才可以进入循环
+
+		newHead = buyNode(cur->val);
+		Node* tail = newHead;
+		cur = cur->next;
+		while (cur)
+		{
+			newNode = buyNode(cur->val);
+			tail->next = newNode;
+			tail = newNode;
+			cur = cur->next;
+		}
+
+		//开始遍历head找到每一个节点的random的指向
+
+		cur = head;
+		Node* newAdd = newHead;
+		while (cur)
+		{
+			//辅助寻找random的指针
+
+			Node* search = head;
+
+			//辅助给newHead链表节点赋random值的指针
+
+			Node* addRandom = newHead;
+
+			//用来确定random的位置的数字
+
+			int count = 0;
+
+			//head的random为NULL，则直接给newHead的random赋值
+
+			if (cur->random == NULL)
+			{
+				newAdd->random = NULL;
+
+				//结束这一次的查找
+
+				cur = cur->next;
+				newAdd = newAdd->next;
+				continue;
+			}
+
+			//寻找random的指向
+
+			while (cur->random != search)
+			{
+				count++;
+				search = search->next;
+			}
+
+			//指向第一个节点的情况
+
+			if (count == 0)
+			{
+				newAdd->random = newHead;
+			}
+
+			//指向非第一个节点的情况
+
+			while (count--)
+			{
+				newAdd->random = addRandom->next;
+				addRandom = addRandom->next;
+			}
+
+			//每一次的递增
+
+			cur = cur->next;
+			newAdd = newAdd->next;
+		}
+
+		return newHead;
+	}
+};
+
+//方法二：在原链表的每一个节点的后面插入一个与其val一样的节点
+//然后当原来的链表某一节点的random指向的位置的下一个就是该节点下一个节点的random的位置
+//最后把链表拆开即可
+
+class Solution {
+public:
+
+	//自定义一个开辟空间并初始化的函数
+
+	 Node* buyNode(int val)
+	 {
+	     Node* newNode=(Node*)malloc(sizeof(Node));
+
+		 //判断空间是否开辟成功
+
+	     if(NULL==newNode)
+	     {
+	         return NULL;
+	     }
+
+		 //赋值初始化
+
+	     newNode->val=val;
+	     newNode->next=NULL;
+	     newNode->random=NULL;
+
+	     return newNode;
+	 }
+
+	 Node* copyRandomList(Node* head) 
+	 {
+		 //如果head为NULL的情况，直接返回NULL
+
+	     if(NULL==head)
+	     {
+	         return NULL;
+	     }
+
+		 //在原链表中插入新的节点
+
+	     Node* cur=head;
+	     Node* newNode=NULL;
+	     while(cur)
+	     {
+	         newNode=buyNode(cur->val);
+	         newNode->next=cur->next;
+	         cur->next=newNode;
+	         cur=newNode->next;
+	     }
+
+		 //给新节点的random赋值
+
+	     cur=head;
+	     while(cur)
+	     {
+	         newNode=cur->next;
+	         if(cur->random)
+	         {
+	             newNode->random=cur->random->next;
+	         }
+	         cur=newNode->next;
+	     }
+
+		 //断开新旧俩个链表
+
+	     Node* newHead=head->next;
+	     cur=head;
+
+	     while(cur->next)
+	     {
+	         newNode=cur->next;
+	         cur->next=newNode->next;
+	         cur=newNode;
+	     }
+
+	     return newHead;
+	 }
+};
+
+//对链表进行插入排序
+
+//方法一：在新链表中一个个的进行插入
+
+struct ListNode* insertionSortList(struct ListNode* head) 
+{
+	Node* newHead = NULL;
+	Node* cur = head;
+
+	while (cur)
+	{
+		//将cur从原链表中移除--->头删
+
+		head = cur->next;
+
+		//在newHead中找cur的插入位置
+
+		Node* pos = newHead;
+
+		//保存插入位置的前一个节点
+
+		Node* prev = NULL;
+
+		//遍历寻找插入位置
+
+		while (pos)
+		{
+			if (cur->val < pos->val)
+			{
+				break;
+			}
+			prev = pos;
+			pos = pos->next;
+		}
+
+		//cur的位置已找到
+		//插入位置在头结点处
+
+		if (pos == newHead)
+		{
+			cur->next = newHead;
+			newHead = cur;
+		}
+
+		//插入位置不在头结点
+
+		else
+		{
+			cur->next = pos;
+			prev->next = cur;
+		}
+		cur = head;
+	}
+
+	return newHead;
+}
+
+//方法二：转换为数组，然后排序，最后转换为链表返回
+
+ struct ListNode* insertionSortList(struct ListNode* head){
+     int  a[5000],i=0,k=0;
+     Node* cur=head;
+
+	 //存入数组
+
+     while(cur)
+     {
+         a[i++]=cur->val;
+         cur=cur->next;
+     }
+
+	 //冒泡排序
+
+     for(int j=0;j<i-1;j++){
+         for(k=0;k<i-1-j;k++){
+             if(a[k]>a[k+1]){
+                 int temp=a[k];
+                 a[k]=a[k+1];
+                 a[k+1]=temp;
+             }
+         }
+     }
+
+	 //转为链表
+
+     cur=head;
+     k=0;
+     while(k<i)
+     {
+         cur->val=a[k++];
+         cur=cur->next;
+     }
+
+     return head;
+ }
