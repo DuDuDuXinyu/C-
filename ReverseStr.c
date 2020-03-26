@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+//逆置arr数组从k到i之间的数据
+
 void reverse(char* arr, int k, int i)
 {
 	while (k < i)
@@ -11,6 +13,8 @@ void reverse(char* arr, int k, int i)
 		k++;
 	}
 }
+
+//将每一个单词逆置
 
 void easyReverse(char *arr)
 {
@@ -27,6 +31,8 @@ void easyReverse(char *arr)
 	reverse(arr, k, i - 1);
 	puts(arr);
 }
+
+//将字符串按单词为单位逆置
 
 void difficultReverse(char* arr,int len)
 {
